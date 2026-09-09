@@ -365,12 +365,12 @@ The project is currently being prepared for production deployment.
 
 ## 👨‍💻 Author
 
-### Sanju H S
+### Mohan Kumar N
 
 Full-Stack Developer | Django | Python | MySQL
 
 **GitHub:**  
-https://github.com/sansanju5413
+https://github.com/mohankumarn053-stack
 
 **Project Repository:**  
 https://github.com/sansanju5413/mobix-ecommerce
