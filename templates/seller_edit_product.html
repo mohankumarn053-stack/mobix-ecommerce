@@ -1,0 +1,139 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit {{ product.name }} | MOBIX Seller Center</title>
+    <link rel="stylesheet" href="{% static 'css/seller.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- SELLER NAVBAR -->
+    <header class="seller-navbar">
+      <a href="{% url 'seller_dashboard' %}" class="seller-logo">
+        <span>MO</span>BIX
+      </a>
+
+      <div class="seller-nav-right">
+        <a href="{% url 'seller_dashboard' %}" class="seller-nav-link">
+          <i class="bi bi-speedometer2"></i>
+          Dashboard
+        </a>
+        <a href="{% url 'seller_store' %}" class="seller-nav-link">
+          <i class="bi bi-shop"></i>
+          My Store
+        </a>
+        <a href="{% url 'home' %}" class="seller-nav-link">
+          View Marketplace
+        </a>
+        <a href="{% url 'my_account' %}" class="seller-user">
+          <i class="bi bi-person-circle"></i>
+          {{ request.user.username }}
+        </a>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="seller-container">
+      <div class="seller-page-header">
+        <div>
+          <span class="seller-label">INVENTORY MANAGEMENT</span>
+          <h1>Edit Product: {{ product.name }}</h1>
+          <p>Update pricing, stock availability, specifications or promotional discounts.</p>
+        </div>
+
+        <a href="{% url 'seller_dashboard' %}" class="seller-btn seller-btn-secondary">
+          <i class="bi bi-arrow-left"></i>
+          Back to Dashboard
+        </a>
+      </div>
+
+      <div class="seller-card" style="background: white; border: 1px solid var(--seller-border); border-radius: 16px; padding: 36px;">
+        <!-- CURRENT PRODUCT IMAGE -->
+        {% if product.image %}
+          <div style="background: #f8fafc; border: 1px solid var(--seller-border); border-radius: 12px; padding: 20px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px;">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name }}"
+              style="width: 80px; height: 80px; object-fit: contain; background: white; border-radius: 8px; border: 1px solid var(--seller-border); padding: 4px;"
+            />
+
+            <div>
+              <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 4px;">{{ product.name }}</h3>
+              <p style="color: #6b7280; font-size: 13px;">Current active product image on marketplace.</p>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- FORM -->
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+
+          <!-- REPLACE IMAGE -->
+          <div style="background: #fafaff; border: 2px dashed #c7c4ff; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
+            <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-cloud-arrow-up" style="color: var(--seller-primary);"></i>
+              Replace Product Image
+            </h3>
+            <p style="color: #6b7280; font-size: 12px; margin-bottom: 12px;">
+              Leave empty if you want to keep the current product image unchanged.
+            </p>
+            {{ form.image.errors }}
+            {{ form.image }}
+          </div>
+
+          <!-- OTHER FIELDS -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            {% for field in form %}
+              {% if field.name != 'image' %}
+                <div style="margin-bottom: 16px; {% if field.name == 'description' or field.name == 'name' %}grid-column: 1 / -1;{% endif %}">
+                  <label style="display: block; font-size: 13px; font-weight: 600; color: #1f2937; margin-bottom: 6px;">
+                    {{ field.label }} {% if field.field.required %}*{% endif %}
+                  </label>
+
+                  {{ field }}
+
+                  {% if field.help_text %}
+                    <span style="display: block; font-size: 11px; color: #9ca3af; margin-top: 4px;">
+                      {{ field.help_text }}
+                    </span>
+                  {% endif %}
+
+                  {% if field.errors %}
+                    <div style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                      {{ field.errors }}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- ACTIONS -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--seller-border); flex-wrap: wrap; gap: 14px;">
+            <a href="{% url 'seller_dashboard' %}" class="seller-btn seller-btn-secondary">
+              <i class="bi bi-arrow-left"></i>
+              Back to Dashboard
+            </a>
+
+            <button type="submit" class="seller-btn seller-btn-primary">
+              <i class="bi bi-check-lg"></i>
+              Update Product Information
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer style="background: #0b1120; color: white; padding: 24px 5%; margin-top: 60px; display: flex; justify-content: space-between; font-size: 12px; color: #64748b;">
+      <p>© 2026 MOBIX Seller Center. All rights reserved.</p>
+      <p>Logged in as {{ request.user.username }}</p>
+    </footer>
+  </body>
+</html>

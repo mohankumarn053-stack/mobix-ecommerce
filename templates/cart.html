@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart | MOBIX{% endblock %}
+
+{% block content %}
+<section class="cart-page">
+  <div class="cart-header">
+    <div>
+      <p class="cart-label">YOUR SHOPPING BAG</p>
+      <h1>Shopping Cart</h1>
+    </div>
+
+    <span>
+      {{ cart_items|length }} item{{ cart_items|length|pluralize }}
+    </span>
+  </div>
+
+  {% if cart_items %}
+    <div class="cart-layout">
+      <!-- CART ITEMS -->
+      <div class="cart-items">
+        {% for item in cart_items %}
+          <div class="cart-item">
+            <div class="cart-product-image">
+              {% if item.product.image %}
+                <img
+                  src="{{ item.product.image.url }}"
+                  alt="{{ item.product.name }}"
+                />
+              {% else %}
+                <i class="bi bi-phone" style="font-size:24px;color:#9ca3af;"></i>
+              {% endif %}
+            </div>
+
+            <div class="cart-product-info">
+              <p>{{ item.product.brand }}</p>
+              <h3>
+                <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+              </h3>
+              <span>{{ item.product.storage }} · {{ item.product.ram }}</span>
+            </div>
+
+            <div class="cart-quantity">
+              <a
+                href="{% url 'decrease_quantity' item.id %}"
+                class="quantity-btn"
+                aria-label="Decrease quantity"
+              >
+                −
+              </a>
+
+              <span>{{ item.quantity }}</span>
+
+              <a
+                href="{% url 'increase_quantity' item.id %}"
+                class="quantity-btn"
+                aria-label="Increase quantity"
+              >
+                +
+              </a>
+            </div>
+
+            <div class="cart-price">
+              <strong>₹{{ item.subtotal|floatformat:0 }}</strong>
+            </div>
+
+            <a
+              href="{% url 'remove_from_cart' item.id %}"
+              class="remove-item"
+              title="Remove item"
+              aria-label="Remove item"
+            >
+              <i class="bi bi-trash3"></i>
+            </a>
+          </div>
+        {% endfor %}
+
+        <div>
+          <a href="{% url 'home' %}#products" class="continue-shopping">
+            <i class="bi bi-arrow-left"></i>
+            Continue Shopping
+          </a>
+        </div>
+      </div>
+
+      <!-- ORDER SUMMARY -->
+      <div class="cart-summary">
+        <h2>Order Summary</h2>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong>₹{{ total|floatformat:0 }}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Delivery</span>
+          <strong class="free">FREE</strong>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <strong>₹{{ total|floatformat:0 }}</strong>
+        </div>
+
+        <a href="{% url 'checkout' %}" class="checkout-btn">
+          <span>Proceed to Checkout</span>
+          <i class="bi bi-arrow-right"></i>
+        </a>
+
+        <div class="secure-checkout">
+          <i class="bi bi-shield-check"></i>
+          100% Secure Checkout
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <!-- EMPTY CART -->
+    <div class="empty-cart">
+      <div class="empty-cart-icon">
+        <i class="bi bi-bag"></i>
+      </div>
+
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added any smartphones to your bag yet.</p>
+
+      <a href="{% url 'home' %}#products" class="shoppingbutton">
+        <span>Start Shopping</span>
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MOBIX — Premium Smartphones & Deals{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-tag">NEXT GENERATION TECHNOLOGY</p>
+
+    <h1>
+      Find Your
+      <span>Perfect</span>
+      Smartphone.
+    </h1>
+
+    <p class="hero-description">
+      Discover the latest smartphones from the world's leading brands at prices you'll love.
+    </p>
+
+    <div class="hero-buttons">
+      <a href="{% url 'search' %}" class="btn-primary">
+        Shop Smartphones
+        <i class="bi bi-arrow-right"></i>
+      </a>
+
+      <a href="#products" class="btn-secondary">
+        Explore Deals
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-phone" aria-hidden="true">
+    <div class="phone-glow"></div>
+
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="camera"></div>
+
+        <div class="screen-content">
+          <span>9:41</span>
+          <strong>MOBIX</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="feature">
+    <i class="bi bi-truck"></i>
+    <div>
+      <h4>Free Delivery</h4>
+      <p>On orders above ₹999</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <i class="bi bi-shield-check"></i>
+    <div>
+      <h4>100% Secure</h4>
+      <p>Safe &amp; secure payments</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <i class="bi bi-arrow-repeat"></i>
+    <div>
+      <h4>Easy Returns</h4>
+      <p>7 day return policy</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <i class="bi bi-headset"></i>
+    <div>
+      <h4>24/7 Support</h4>
+      <p>We're here to help</p>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES / BRANDS -->
+<section class="section" id="brands">
+  <div class="section-heading">
+    <div>
+      <p class="small-title">EXPLORE</p>
+      <h2>Shop By Brand</h2>
+    </div>
+
+    <a href="{% url 'search' %}">
+      View all
+      <i class="bi bi-arrow-up-right"></i>
+    </a>
+  </div>
+
+  <div class="category-grid">
+    {% for category in categories %}
+      <a href="{% url 'brand_products' category.name %}" class="category-card">
+        {% if category.image %}
+          <img src="{{ category.image.url }}" alt="{{ category.name }}" />
+        {% else %}
+          <div class="category-placeholder">
+            <i class="bi bi-phone"></i>
+          </div>
+        {% endif %}
+
+        <div>
+          <h3>{{ category.name }}</h3>
+<p>
+    {{ category.product_count }}
+    Product{{ category.product_count|pluralize }}
+</p>        </div>
+
+        <i class="bi bi-arrow-up-right category-arrow"></i>
+      </a>
+    {% empty %}
+      <div class="empty-message">Categories coming soon.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- TRENDING PRODUCTS -->
+<section class="section products-section" id="products">
+  <div class="section-heading">
+    <div>
+      <p class="small-title">LATEST COLLECTION</p>
+      <h2>Trending Smartphones</h2>
+    </div>
+
+    <a href="{% url 'search' %}">
+      View all
+      <i class="bi bi-arrow-up-right"></i>
+    </a>
+  </div>
+
+  <div class="product-grid">
+    {% for product in products %}
+      <div class="product-card">
+        <div class="product-image">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" />
+          {% else %}
+            <div class="product-placeholder">
+              <i class="bi bi-phone"></i>
+            </div>
+          {% endif %}
+
+          {% if product.discount > 0 %}
+            <span class="discount">-{{ product.discount }}%</span>
+          {% endif %}
+
+          <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist" title="Add to Wishlist" aria-label="Add to Wishlist">
+            <i class="bi bi-heart"></i>
+          </a>
+        </div>
+
+        <div class="product-info">
+          <p class="brand">{{ product.brand }}</p>
+
+          <h3>
+            <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+          </h3>
+
+          <div class="rating">
+            <i class="bi bi-star-fill"></i>
+            <span>{{ product.rating }}</span>
+          </div>
+
+          <div class="price-row">
+            <div>
+              {% if product.discount > 0 %}
+                <span class="old-price">₹{{ product.price }}</span>
+                <span class="price">₹{{ product.discounted_price|floatformat:0 }}</span>
+              {% else %}
+                <span class="price">₹{{ product.price }}</span>
+              {% endif %}
+            </div>
+
+            <a href="{% url 'product_detail' product.id %}" class="add-cart" title="View details &amp; buy" aria-label="View details">
+              <i class="bi bi-bag-plus"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-products">
+        <i class="bi bi-phone"></i>
+        <h3>No products yet</h3>
+        <p>Add smartphones from the Django Admin or Seller Dashboard and they'll appear here automatically.</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- OFFER BANNER -->
+<section class="offer">
+  <div>
+    <p class="small-title" style="color: #a5b4fc;">LIMITED TIME OFFER</p>
+
+    <h2>
+      Upgrade Your
+      <span>Smartphone</span>
+      Today.
+    </h2>
+
+    <p>Get amazing deals on the latest smartphones with easy returns and fast delivery.</p>
+
+    <a href="{% url 'search' %}" class="btn-primary">
+      Explore Offers
+      <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+
+  <div class="offer-icon" aria-hidden="true">
+    <i class="bi bi-phone"></i>
+  </div>
+</section>
+{% endblock %}

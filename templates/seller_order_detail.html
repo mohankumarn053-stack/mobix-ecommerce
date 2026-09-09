@@ -1,0 +1,1043 @@
+{% load static %}
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>
+        Order #{{ order.id }} | MOBIX
+    </title>
+
+
+    <!-- Seller CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/seller.css' %}"
+    />
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+====================================================== -->
+
+<header class="seller-navbar">
+
+    <a
+        href="{% url 'seller_dashboard' %}"
+        class="seller-logo"
+    >
+        MO<span>BIX</span>
+    </a>
+
+
+    <div class="seller-nav-right">
+
+        <a
+            href="{% url 'seller_dashboard' %}"
+            class="seller-nav-link"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="{% url 'seller_store' %}"
+            class="seller-nav-link"
+        >
+            <i class="bi bi-shop"></i>
+            My Store
+        </a>
+
+
+        <a
+            href="{% url 'my_account' %}"
+            class="seller-nav-link"
+        >
+            Account
+        </a>
+
+
+        <div class="seller-user">
+
+            <i class="bi bi-person-circle"></i>
+
+            {{ request.user.username }}
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+====================================================== -->
+
+<main class="seller-container">
+
+
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="seller-page-header">
+
+        <div>
+
+            <span class="seller-label">
+                ORDER DETAILS
+            </span>
+
+
+            <h1>
+                Order #{{ order.id }}
+            </h1>
+
+
+            <p>
+                Detailed information about your order.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'seller_dashboard' %}"
+            class="seller-btn seller-btn-secondary"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back to Orders
+
+        </a>
+
+    </div>
+
+
+
+    <!-- =================================================
+     ORDER STATUS
+================================================== -->
+
+<section class="seller-section seller-order-status-section">
+
+    <div class="seller-section-header">
+
+        <div>
+            <span class="seller-label">
+                ORDER TRACKING
+            </span>
+
+            <h2>
+                Order Status
+            </h2>
+
+            <p>
+                Track and manage the current status of this order.
+            </p>
+        </div>
+
+
+        <!-- CURRENT STATUS -->
+
+        <div class="seller-current-status">
+
+            <span class="seller-status-label">
+                Current Status
+            </span>
+
+            <span
+                class="
+                    seller-status
+                    {{ seller_order.status|lower }}
+                "
+            >
+
+                {% if seller_order.status == "Pending" %}
+                    <i class="bi bi-clock-fill"></i>
+
+                {% elif seller_order.status == "Confirmed" %}
+                    <i class="bi bi-check-circle-fill"></i>
+
+                {% elif seller_order.status == "Shipped" %}
+                    <i class="bi bi-truck"></i>
+
+                {% elif seller_order.status == "Delivered" %}
+                    <i class="bi bi-check-circle-fill"></i>
+
+                {% elif seller_order.status == "Cancelled" %}
+                    <i class="bi bi-x-circle-fill"></i>
+
+                {% endif %}
+
+                {{ seller_order.status }}
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         STATUS TIMELINE
+    ================================================== -->
+
+    {% if seller_order.status != "Cancelled" %}
+
+    <div class="seller-status-timeline">
+
+
+        <!-- PENDING -->
+
+        <div
+            class="
+                seller-timeline-item
+                {% if seller_order.status == 'Pending' or seller_order.status == 'Confirmed' or seller_order.status == 'Shipped' or seller_order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            "
+        >
+
+            <div class="seller-timeline-circle">
+
+                {% if seller_order.status == "Pending" %}
+                    <i class="bi bi-clock-fill"></i>
+                {% else %}
+                    <i class="bi bi-check-lg"></i>
+                {% endif %}
+
+            </div>
+
+            <div class="seller-timeline-content">
+
+                <strong>
+                    Order Placed
+                </strong>
+
+                <span>
+                    Order received
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- LINE -->
+
+        <div
+            class="
+                seller-timeline-connector
+                {% if seller_order.status == 'Confirmed' or seller_order.status == 'Shipped' or seller_order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            "
+        ></div>
+
+
+        <!-- CONFIRMED -->
+
+        <div
+            class="
+                seller-timeline-item
+                {% if seller_order.status == 'Confirmed' or seller_order.status == 'Shipped' or seller_order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            "
+        >
+
+            <div class="seller-timeline-circle">
+
+                {% if seller_order.status == "Confirmed" or seller_order.status == "Shipped" or seller_order.status == "Delivered" %}
+                    <i class="bi bi-check-lg"></i>
+                {% else %}
+                    <i class="bi bi-check"></i>
+                {% endif %}
+
+            </div>
+
+            <div class="seller-timeline-content">
+
+                <strong>
+                    Confirmed
+                </strong>
+
+                <span>
+                    Order confirmed
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- LINE -->
+
+        <div
+            class="
+                seller-timeline-connector
+                {% if seller_order.status == 'Shipped' or seller_order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            "
+        ></div>
+
+
+        <!-- SHIPPED -->
+
+        <div
+            class="
+                seller-timeline-item
+                {% if seller_order.status == 'Shipped' or seller_order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            "
+        >
+
+            <div class="seller-timeline-circle">
+
+                {% if seller_order.status == "Shipped" or seller_order.status == "Delivered" %}
+                    <i class="bi bi-check-lg"></i>
+                {% else %}
+                    <i class="bi bi-truck"></i>
+                {% endif %}
+
+            </div>
+
+            <div class="seller-timeline-content">
+
+                <strong>
+                    Shipped
+                </strong>
+
+                <span>
+                    On the way
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- LINE -->
+
+        <div
+            class="
+                seller-timeline-connector
+                {% if seller_order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            "
+        ></div>
+
+
+        <!-- DELIVERED -->
+
+        <div
+            class="
+                seller-timeline-item
+                {% if seller_order.status == 'Delivered' %}
+                    completed current
+                {% endif %}
+            "
+        >
+
+            <div class="seller-timeline-circle">
+
+                {% if seller_order.status == "Delivered" %}
+                    <i class="bi bi-check-lg"></i>
+                {% else %}
+                    <i class="bi bi-house-check"></i>
+                {% endif %}
+
+            </div>
+
+            <div class="seller-timeline-content">
+
+                <strong>
+                    Delivered
+                </strong>
+
+                <span>
+                    Order delivered
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- =================================================
+         CANCELLED
+    ================================================== -->
+
+    <div class="seller-cancelled-order">
+
+        <div class="seller-cancelled-icon">
+
+            <i class="bi bi-x-circle-fill"></i>
+
+        </div>
+
+        <div>
+
+            <strong>
+                Order Cancelled
+            </strong>
+
+            <p>
+                This order has been cancelled and can no longer be updated.
+            </p>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =================================================
+         UPDATE STATUS
+    ================================================== -->
+
+    {% if seller_order.status != "Delivered" and seller_order.status != "Cancelled" %}
+
+    <div class="seller-order-status-actions">
+
+        <div>
+
+            <strong>
+                Update Order Status
+            </strong>
+
+            <p>
+                Move the order to the next stage.
+            </p>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{% url 'seller_update_order_status' seller_order.order.id %}"
+            class="seller-detail-status-form"
+        >
+
+            {% csrf_token %}
+
+
+            <select name="status">
+
+                <option
+                    value="Pending"
+                    {% if seller_order.status == "Pending" %}
+                        selected
+                    {% endif %}
+                >
+                    Pending
+                </option>
+
+
+                <option
+                    value="Confirmed"
+                    {% if seller_order.status == "Confirmed" %}
+                        selected
+                    {% endif %}
+                >
+                    Confirmed
+                </option>
+
+
+                <option
+                    value="Shipped"
+                    {% if seller_order.status == "Shipped" %}
+                        selected
+                    {% endif %}
+                >
+                    Shipped
+                </option>
+
+
+                <option value="Delivered">
+                    Delivered
+                </option>
+
+
+                <option value="Cancelled">
+                    Cancelled
+                </option>
+
+            </select>
+
+
+            <button
+                type="submit"
+                class="seller-btn seller-btn-primary"
+            >
+
+                <i class="bi bi-arrow-repeat"></i>
+
+                Update Status
+
+            </button>
+
+        </form>
+
+    </div>
+
+    {% else %}
+
+    <!-- FINAL STATUS -->
+
+    <div class="seller-final-status-message">
+
+        {% if seller_order.status == "Delivered" %}
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <div>
+
+                <strong>
+                    Order Completed
+                </strong>
+
+                <p>
+                    This order has been delivered successfully.
+                    The status can no longer be changed.
+                </p>
+
+            </div>
+
+        {% elif seller_order.status == "Cancelled" %}
+
+            <i class="bi bi-x-circle-fill"></i>
+
+            <div>
+
+                <strong>
+                    Order Cancelled
+                </strong>
+
+                <p>
+                    This order is closed and can no longer be changed.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+
+    <!-- =================================================
+         CUSTOMER INFORMATION
+    ================================================== -->
+
+    <section class="seller-section">
+
+        <div class="seller-section-header">
+
+            <div>
+
+                <h2>
+                    Customer Information
+                </h2>
+
+                <p>
+                    Delivery information for this order.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="seller-store-details">
+
+
+            <!-- CUSTOMER -->
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-person"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Customer
+                    </span>
+
+                    <strong>
+                        {{ order.full_name }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PHONE -->
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-telephone"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Phone
+                    </span>
+
+                    <strong>
+                        {{ order.phone }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CITY -->
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-geo-alt"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        City
+                    </span>
+
+                    <strong>
+                        {{ order.city }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- STATE -->
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-map"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        State
+                    </span>
+
+                    <strong>
+                        {{ order.state }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PINCODE -->
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-pin-map"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Pincode
+                    </span>
+
+                    <strong>
+                        {{ order.pincode }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PAYMENT -->
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-credit-card"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Payment
+                    </span>
+
+                    <strong>
+                        {{ order.payment_method }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ADDRESS -->
+
+        <div class="seller-store-address">
+
+            <span>
+
+                <i class="bi bi-house"></i>
+
+                Delivery Address
+
+            </span>
+
+
+            <p>
+
+                {{ order.address }}
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         SELLER PRODUCTS
+    ================================================== -->
+
+    <section class="seller-section">
+
+        <div class="seller-section-header">
+
+            <div>
+
+                <h2>
+                    Your Products in This Order
+                </h2>
+
+                <p>
+                    Products sold by your store.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="seller-products">
+
+
+            {% for item in order_items %}
+
+
+            <div class="seller-product-card">
+
+
+                <div class="seller-product-top">
+
+
+                    <!-- PRODUCT IMAGE -->
+
+                    <div class="seller-product-image">
+
+                        {% if item.product.image %}
+
+                            <img
+                                src="{{ item.product.image.url }}"
+                                alt="{{ item.product.name }}"
+                            />
+
+                        {% else %}
+
+                            <div class="seller-no-image">
+
+                                <i class="bi bi-phone"></i>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- PRODUCT DETAILS -->
+
+                    <div class="seller-product-details">
+
+                        <h3 class="seller-product-name">
+
+                            {{ item.product.name }}
+
+                        </h3>
+
+
+                        <p class="seller-product-price">
+
+                            ₹{{ item.price|floatformat:2 }}
+
+                        </p>
+
+
+                        <p>
+
+                            Quantity:
+                            <strong>
+                                {{ item.quantity }}
+                            </strong>
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- SUBTOTAL -->
+
+                    <div class="seller-order-item-price">
+
+                        ₹{{ item.subtotal|floatformat:2 }}
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+        <!-- SELLER TOTAL -->
+
+        <div class="seller-order-footer">
+
+            <div class="seller-order-total">
+
+                <span>
+                    Your Total
+                </span>
+
+                <strong>
+                    ₹{{ seller_order.total_amount|floatformat:2 }}
+                </strong>
+
+            </div>
+
+
+            <span
+                class="
+                    seller-status
+                    {{ seller_order.status|lower }}
+                "
+            >
+
+                {{ seller_order.status }}
+
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ORDER INFORMATION
+    ================================================== -->
+
+    <section class="seller-section">
+
+        <div class="seller-section-header">
+
+            <div>
+
+                <h2>
+                    Order Information
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="seller-store-details">
+
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-hash"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Order ID
+                    </span>
+
+                    <strong>
+                        #{{ order.id }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-calendar"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Order Date
+                    </span>
+
+                    <strong>
+                        {{ order.created_at|date:"d M Y, h:i A" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="seller-store-detail">
+
+                <div class="seller-store-detail-icon">
+
+                    <i class="bi bi-currency-rupee"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Seller Total
+                    </span>
+
+                    <strong>
+                        ₹{{ seller_order.total_amount|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+</main>
+
+
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+
+<footer class="seller-footer">
+
+    <p>
+        © 2026 MOBIX. All rights reserved.
+    </p>
+
+    <p>
+        Seller Center • Built with Django & MySQL
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

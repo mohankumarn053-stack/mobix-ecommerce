@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account | MOBIX{% endblock %}
+
+{% block content %}
+<main class="auth-page">
+  <div class="auth-card">
+    <div class="auth-label">GET STARTED</div>
+    <h1>Create Your Account</h1>
+    <p class="auth-subtitle">Join MOBIX for faster checkout, order tracking and exclusive deals.</p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="auth-message">
+          <i class="bi bi-exclamation-circle"></i>
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="username">Username *</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Choose a username"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="name@example.com"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Create a secure password"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password *</label>
+        <input
+          type="password"
+          id="confirm_password"
+          name="confirm_password"
+          placeholder="Re-enter your password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="auth-btn">
+        Create Account →
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Already have a MOBIX account?
+      <a href="{% url 'login' %}">Sign In</a>
+    </p>
+  </div>
+</main>
+{% endblock %}

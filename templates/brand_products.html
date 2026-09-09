@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ brand }} Smartphones | MOBIX{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="{% url 'home' %}">Home</a>
+  <i class="bi bi-chevron-right"></i>
+  <a href="{% url 'home' %}#brands">Brands</a>
+  <i class="bi bi-chevron-right"></i>
+  <span>{{ brand }}</span>
+</div>
+
+<section class="section products-section">
+  <div class="section-heading">
+    <div>
+      <p class="small-title">BRAND CATALOGUE</p>
+      <h2>{{ brand }} Smartphones</h2>
+    </div>
+
+    <span>{{ products|length }} Smartphone{{ products|length|pluralize }} Available</span>
+  </div>
+
+  <div class="product-grid">
+    {% for product in products %}
+      <div class="product-card">
+        <div class="product-image">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" />
+          {% else %}
+            <div class="product-placeholder">
+              <i class="bi bi-phone"></i>
+            </div>
+          {% endif %}
+
+          {% if product.discount > 0 %}
+            <span class="discount">-{{ product.discount }}%</span>
+          {% endif %}
+
+          <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist" title="Add to Wishlist" aria-label="Add to Wishlist">
+            <i class="bi bi-heart"></i>
+          </a>
+        </div>
+
+        <div class="product-info">
+          <p class="brand">{{ product.brand }}</p>
+
+          <h3>
+            <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+          </h3>
+
+          <div class="rating">
+            <i class="bi bi-star-fill"></i>
+            <span>{{ product.rating }}</span>
+          </div>
+
+          <div class="price-row">
+            <div>
+              {% if product.discount > 0 %}
+                <span class="old-price">₹{{ product.price }}</span>
+                <span class="price">₹{{ product.discounted_price|floatformat:0 }}</span>
+              {% else %}
+                <span class="price">₹{{ product.price }}</span>
+              {% endif %}
+            </div>
+
+            <a href="{% url 'product_detail' product.id %}" class="add-cart" title="View details" aria-label="View details">
+              <i class="bi bi-bag-plus"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-products">
+        <i class="bi bi-phone"></i>
+        <h3>No {{ brand }} smartphones found</h3>
+        <p>There are currently no products available for this brand in stock.</p>
+        <div style="margin-top: 18px;">
+          <a href="{% url 'search' %}" class="continue-btn">
+            <span>Browse All Brands</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,179 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}MOBIX — Premium Smartphones{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+
+      <a href="{% url 'home' %}" class="logo" aria-label="MOBIX Home">
+        <span>MO</span>BIX
+      </a>
+
+      <div class="nav-links" id="nav-links">
+        <a href="{% url 'home' %}" class="nav-link">Home</a>
+        <a href="{% url 'search' %}" class="nav-link">Smartphones</a>
+        <a href="{% url 'home' %}#brands" class="nav-link">Brands</a>
+        <a href="{% url 'search' %}" class="nav-link">Deals</a>
+        {% if request.user.is_authenticated %}
+          {% if seller_application %}
+            {% if seller_application.status == "Approved" %}
+              <a href="{% url 'seller_dashboard' %}" class="nav-link seller-nav-link">
+                <i class="bi bi-shop"></i> Seller Center
+              </a>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="nav-actions">
+        <form method="GET" action="{% url 'search' %}" class="search-box" role="search">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input
+            type="text"
+            name="q"
+            placeholder="Search smartphones..."
+            aria-label="Search smartphones"
+          />
+        </form>
+
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'my_account' %}" class="nav-icon-btn" title="My Account" aria-label="My Account">
+            <i class="bi bi-person"></i>
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="nav-icon-btn" title="Login" aria-label="Login">
+            <i class="bi bi-person"></i>
+          </a>
+        {% endif %}
+
+        <a href="{% url 'cart' %}" class="nav-icon-btn cart-icon" title="Shopping Cart" aria-label="Shopping Cart">
+          <i class="bi bi-bag"></i>
+          {% if cart_items %}
+            <span class="cart-badge">{{ cart_items|length }}</span>
+          {% endif %}
+        </a>
+
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+    </nav>
+
+    <!-- ===== MESSAGES ===== -->
+    {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+          <div class="message message-{{ message.tags }}">
+            <i class="bi bi-info-circle"></i>
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- ===== PAGE CONTENT ===== -->
+    {% block content %}{% endblock %}
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+      <div class="footer-main">
+
+        <div class="footer-brand">
+          <a href="{% url 'home' %}" class="logo footer-logo" aria-label="MOBIX Home">
+            <span>MO</span>BIX
+          </a>
+          <p>Your destination for the latest smartphones and technology.</p>
+          <div class="socials">
+            <a href="{% url 'home' %}" aria-label="Instagram" title="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="{% url 'home' %}" aria-label="Facebook" title="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="{% url 'home' %}" aria-label="Twitter" title="Twitter X"><i class="bi bi-twitter-x"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <a href="{% url 'search' %}">Smartphones</a>
+          <a href="{% url 'home' %}#brands">Brands</a>
+          <a href="{% url 'search' %}">Deals</a>
+          <a href="{% url 'search' %}">New Arrivals</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="{% url 'search' %}">Contact Us</a>
+          <a href="{% url 'search' %}">Shipping Info</a>
+          <a href="{% url 'search' %}">Easy Returns</a>
+          <a href="{% url 'search' %}">FAQ</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Account</h4>
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'my_account' %}">My Account</a>
+            <a href="{% url 'my_orders' %}">My Orders</a>
+            <a href="{% url 'wishlist' %}">Wishlist</a>
+            <a href="{% url 'cart' %}">Cart</a>
+          {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'cart' %}">Cart</a>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Mobix. All rights reserved.</p>
+        <p>Built with Django &amp; MySQL</p>
+      </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+    <script>
+      // Mobile hamburger menu
+      const hamburger = document.getElementById('hamburger-btn');
+      const navLinks = document.getElementById('nav-links');
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', function () {
+          const isOpen = navLinks.classList.toggle('nav-open');
+          hamburger.classList.toggle('hamburger-open');
+          hamburger.setAttribute('aria-expanded', isOpen);
+        });
+        // Close menu when a link is clicked
+        navLinks.querySelectorAll('a').forEach(function(link) {
+          link.addEventListener('click', function() {
+            navLinks.classList.remove('nav-open');
+            hamburger.classList.remove('hamburger-open');
+            hamburger.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Auto-dismiss messages after 4s
+      document.querySelectorAll('.message').forEach(function(msg) {
+        setTimeout(function() {
+          msg.style.opacity = '0';
+          msg.style.transform = 'translateY(-10px)';
+          setTimeout(function() { msg.remove(); }, 300);
+        }, 4000);
+      });
+    </script>
+
+  </body>
+</html>

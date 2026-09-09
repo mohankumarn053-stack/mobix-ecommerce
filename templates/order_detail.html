@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.id }} | MOBIX{% endblock %}
+
+{% block content %}
+<main class="order-detail-page">
+  <div class="order-detail-container">
+    <!-- HEADER -->
+    <div class="order-detail-header">
+      <div>
+        <div class="section-label">ORDER SUMMARY</div>
+        <h1>Order #{{ order.id }}</h1>
+        <p>Placed on {{ order.created_at|date:"d M Y, h:i A" }}</p>
+      </div>
+
+      <span class="order-status status-{{ order.status|lower }}">
+        {{ order.status }}
+      </span>
+    </div>
+
+    <!-- ORDER TRACKING -->
+    <section class="order-tracking">
+      <h2>Order Status &amp; Tracking</h2>
+
+      {% if order.status == 'Cancelled' %}
+        <div class="order-cancelled-message">
+          <div class="cancelled-icon">
+            <i class="bi bi-x-lg"></i>
+          </div>
+          <div>
+            <strong>Order Cancelled</strong>
+            <span>This order has been cancelled and will not be processed further.</span>
+          </div>
+        </div>
+      {% else %}
+        <div class="tracking-steps">
+          <!-- ORDER PLACED -->
+          <div class="tracking-step active">
+            <div class="tracking-icon">
+              <i class="bi bi-receipt"></i>
+            </div>
+            <strong>Order Placed</strong>
+            <span>Received</span>
+          </div>
+
+          <div class="tracking-line"></div>
+
+          <!-- CONFIRMED -->
+          <div class="tracking-step {% if order.status == 'Confirmed' or order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+            <div class="tracking-icon">
+              <i class="bi bi-check-lg"></i>
+            </div>
+            <strong>Confirmed</strong>
+            <span>Processing</span>
+          </div>
+
+          <div class="tracking-line"></div>
+
+          <!-- SHIPPED -->
+          <div class="tracking-step {% if order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+            <div class="tracking-icon">
+              <i class="bi bi-truck"></i>
+            </div>
+            <strong>Shipped</strong>
+            <span>On the way</span>
+          </div>
+
+          <div class="tracking-line"></div>
+
+          <!-- DELIVERED -->
+          <div class="tracking-step {% if order.status == 'Delivered' %}active{% endif %}">
+            <div class="tracking-icon">
+              <i class="bi bi-house-check"></i>
+            </div>
+            <strong>Delivered</strong>
+            <span>Delivered</span>
+          </div>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- ORDER ITEMS -->
+    <section class="order-items-section">
+      <div class="order-section-heading">
+        <div>
+          <div class="section-label">PURCHASE DETAILS</div>
+          <h2>Items in this Order</h2>
+        </div>
+
+        <span>
+          {{ order.items.count }} item{{ order.items.count|pluralize }}
+        </span>
+      </div>
+
+      {% for item in order.items.all %}
+        <div class="order-item">
+          <div class="order-item-image">
+            {% if item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt="{{ item.product.name }}"
+              />
+            {% else %}
+              <i class="bi bi-phone" style="font-size:24px;color:#9ca3af;"></i>
+            {% endif %}
+          </div>
+
+          <div class="order-item-info">
+            <span class="order-item-brand">{{ item.product.brand }}</span>
+            <h3>
+              <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+            </h3>
+            <p>Quantity: {{ item.quantity }}</p>
+          </div>
+
+          <div class="order-item-price">
+            <strong>₹{{ item.price|floatformat:0 }}</strong>
+            <span>₹{% widthratio item.price 1 item.quantity %} total</span>
+          </div>
+        </div>
+      {% endfor %}
+    </section>
+
+    <!-- TWO COLUMN INFORMATION -->
+    <div class="order-info-grid">
+      <!-- DELIVERY -->
+      <section class="order-info-card">
+        <div class="order-info-card-header">
+          <i class="bi bi-geo-alt"></i>
+          <div>
+            <h2>Delivery Address</h2>
+            <span>Shipping destination</span>
+          </div>
+        </div>
+
+        <div class="delivery-details">
+          <strong>{{ order.full_name }}</strong>
+          <p>{{ order.address }}</p>
+          <p>{{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
+          <p>
+            <i class="bi bi-telephone"></i>
+            {{ order.phone }}
+          </p>
+        </div>
+      </section>
+
+      <!-- PAYMENT -->
+      <section class="order-info-card">
+        <div class="order-info-card-header">
+          <i class="bi bi-credit-card"></i>
+          <div>
+            <h2>Payment Details</h2>
+            <span>Billing info</span>
+          </div>
+        </div>
+
+        <div class="payment-details">
+          <div>
+            <span>Payment Method:</span>
+            <strong>{{ order.payment_method }}</strong>
+          </div>
+
+          <div>
+            <span>Payment Status:</span>
+            <strong>{% if order.payment_method == 'Cash on Delivery' %}Pay on Delivery{% else %}Paid{% endif %}</strong>
+          </div>
+
+          <div>
+            <span>Order Status:</span>
+            <strong>{{ order.status }}</strong>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TOTAL -->
+    <section class="order-total-card">
+      <div>
+        <span>Total Order Amount:</span>
+        <strong>₹{{ order.total_amount|floatformat:0 }}</strong>
+      </div>
+    </section>
+
+    <!-- ACTIONS -->
+    <div class="order-detail-actions">
+      <a href="{% url 'my_orders' %}" class="secondary-order-btn">
+        <i class="bi bi-arrow-left"></i>
+        Back to Orders
+      </a>
+
+      {% if order.status == 'Pending' or order.status == 'Confirmed' %}
+        <form
+          method="POST"
+          action="{% url 'cancel_order' order.id %}"
+          style="display: inline;"
+          onsubmit="return confirm('Are you sure you want to cancel this order?');"
+        >
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="cancel-order-btn"
+          >
+            <i class="bi bi-x-circle"></i>
+            Cancel Order
+          </button>
+        </form>
+      {% endif %}
+
+      <a href="{% url 'home' %}#products" class="primary-order-btn">
+        Continue Shopping
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

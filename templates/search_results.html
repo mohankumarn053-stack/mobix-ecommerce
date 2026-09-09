@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search{% if query %} — {{ query }}{% endif %} | MOBIX{% endblock %}
+
+{% block content %}
+<main class="search-page">
+  <div class="search-header">
+    <p class="small-title">CATALOGUE SEARCH</p>
+    {% if query %}
+      <h1>Search Results for "{{ query }}"</h1>
+      {% if products %}
+        <p>Found {{ products|length }} smartphone{{ products|length|pluralize }} matching your query</p>
+      {% else %}
+        <p>No products found matching "{{ query }}"</p>
+      {% endif %}
+    {% else %}
+      <h1>All Smartphones</h1>
+      <p>Browse our complete catalog of verified smartphones from leading brands.</p>
+    {% endif %}
+  </div>
+
+  {% if products %}
+    <div class="product-grid">
+      {% for product in products %}
+        <div class="product-card">
+          <div class="product-image">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" />
+            {% else %}
+              <div class="product-placeholder">
+                <i class="bi bi-phone"></i>
+              </div>
+            {% endif %}
+
+            {% if product.discount > 0 %}
+              <span class="discount">-{{ product.discount }}%</span>
+            {% endif %}
+
+            <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist" title="Add to Wishlist" aria-label="Add to Wishlist">
+              <i class="bi bi-heart"></i>
+            </a>
+          </div>
+
+          <div class="product-info">
+            <p class="brand">{{ product.brand }}</p>
+
+            <h3>
+              <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+            </h3>
+
+            <div class="rating">
+              <i class="bi bi-star-fill"></i>
+              <span>{{ product.rating }}</span>
+            </div>
+
+            <div class="price-row">
+              <div>
+                {% if product.discount > 0 %}
+                  <span class="old-price">₹{{ product.price }}</span>
+                  <span class="price">₹{{ product.discounted_price|floatformat:0 }}</span>
+                {% else %}
+                  <span class="price">₹{{ product.price }}</span>
+                {% endif %}
+              </div>
+
+              <a href="{% url 'product_detail' product.id %}" class="add-cart" title="View details" aria-label="View details">
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-results">
+      <div class="no-results-icon">
+        <i class="bi bi-search"></i>
+      </div>
+
+      <h2>No Smartphones Found</h2>
+      <p>We couldn't find any products matching "{{ query }}". Try searching for popular brands like Apple, Samsung, Xiaomi or OnePlus.</p>
+
+      <a href="{% url 'search' %}" class="continue-btn">
+        <span>View All Smartphones</span>
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  {% endif %}
+</main>
+{% endblock %}

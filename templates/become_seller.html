@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Become a Seller | MOBIX{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/become_seller.css' %}" />
+{% endblock %}
+
+{% block content %}
+<main class="become-page">
+  <!-- PAGE INTRO -->
+  <section class="become-hero">
+    <div class="become-hero-icon">
+      <i class="bi bi-shop"></i>
+    </div>
+
+    <div>
+      <span class="become-label">SELLER CENTER</span>
+      <h1>Become a Verified MOBIX Seller</h1>
+      <p>Reach thousands of tech buyers across the country. Register your store and start selling genuine smartphones today.</p>
+    </div>
+  </section>
+
+  <!-- APPLICATION CARD -->
+  <section class="seller-application-card">
+    <div class="application-header">
+      <div class="application-header-icon">
+        <i class="bi bi-person-badge"></i>
+      </div>
+
+      <div>
+        <h2>Seller Registration Form</h2>
+        <p>Tell us about yourself and your retail or distribution business. Applications are verified by our team within 24-48 hours.</p>
+      </div>
+    </div>
+
+    <form method="POST" class="seller-form">
+      {% csrf_token %}
+
+      <!-- PERSONAL INFORMATION -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="bi bi-person"></i>
+          <div>
+            <h3>Applicant Contact</h3>
+            <p>Your primary point-of-contact details.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="{{ form.full_name.id_for_label }}">Full Name *</label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}
+              <div class="form-error">{{ form.full_name.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.phone.id_for_label }}">Contact Number *</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+              <div class="form-error">{{ form.phone.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- STORE INFORMATION -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="bi bi-shop"></i>
+          <div>
+            <h3>Store Information</h3>
+            <p>Your public brand or company trading name.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="{{ form.store_name.id_for_label }}">Store / Business Name *</label>
+            {{ form.store_name }}
+            {% if form.store_name.errors %}
+              <div class="form-error">{{ form.store_name.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.seller_type.id_for_label }}">Seller Classification *</label>
+            {{ form.seller_type }}
+            {% if form.seller_type.errors %}
+              <div class="form-error">{{ form.seller_type.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- ADDRESS -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="bi bi-geo-alt"></i>
+          <div>
+            <h3>Business Location</h3>
+            <p>Warehouse or registered retail storefront address.</p>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="{{ form.address.id_for_label }}">Street Address *</label>
+          {{ form.address }}
+          {% if form.address.errors %}
+            <div class="form-error">{{ form.address.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="{{ form.city.id_for_label }}">City *</label>
+            {{ form.city }}
+            {% if form.city.errors %}
+              <div class="form-error">{{ form.city.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.state.id_for_label }}">State *</label>
+            {{ form.state }}
+            {% if form.state.errors %}
+              <div class="form-error">{{ form.state.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.pincode.id_for_label }}">PIN Code *</label>
+            {{ form.pincode }}
+            {% if form.pincode.errors %}
+              <div class="form-error">{{ form.pincode.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="bi bi-phone"></i>
+          <div>
+            <h3>Product Categories</h3>
+            <p>Specify the types of devices you plan to list.</p>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="{{ form.products_to_sell.id_for_label }}">Products to Sell *</label>
+          {{ form.products_to_sell }}
+          <span class="form-help">e.g. Flagship Smartphones, Mid-range devices, Official Accessories</span>
+          {% if form.products_to_sell.errors %}
+            <div class="form-error">{{ form.products_to_sell.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="bi bi-file-text"></i>
+          <div>
+            <h3>Business Overview</h3>
+            <p>Brief background about your company's retail track record.</p>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="{{ form.description.id_for_label }}">Description</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <div class="form-error">{{ form.description.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- SUBMIT AREA -->
+      <div class="application-submit">
+        <div class="submit-info">
+          <i class="bi bi-shield-check"></i>
+          <span>Your application details will be securely submitted to MOBIX verification team.</span>
+        </div>
+
+        <button type="submit" class="submit-seller-btn">
+          <i class="bi bi-send"></i>
+          <span>Submit Application</span>
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- BACK TO ACCOUNT -->
+  <div class="back-account" style="text-align:center;margin: 28px 0;">
+    <a href="{% url 'my_account' %}" class="secondary-order-btn">
+      <i class="bi bi-arrow-left"></i>
+      Back to My Account
+    </a>
+  </div>
+</main>
+{% endblock %}

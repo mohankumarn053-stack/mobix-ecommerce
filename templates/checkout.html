@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Secure Checkout | MOBIX{% endblock %}
+
+{% block content %}
+<main class="checkout-page">
+  <div class="checkout-container">
+    <div class="checkout-left">
+      <div class="section-label">STEP 2 OF 2 · FINAL STEP</div>
+      <h1>Checkout</h1>
+
+      {% if error %}
+        <div class="checkout-error">
+          <i class="bi bi-exclamation-circle"></i>
+          {{ error }}
+        </div>
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="checkout-section">
+          <h2><i class="bi bi-geo-alt"></i> Delivery Information</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="full_name">Full Name *</label>
+              <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                placeholder="e.g. John Doe"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number *</label>
+              <input
+                type="text"
+                id="phone"
+                name="phone"
+                placeholder="10-digit mobile number"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Street Address / House No. / Area *</label>
+            <textarea
+              id="address"
+              name="address"
+              placeholder="Full delivery address with landmarks"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="form-group">
+              <label for="city">City *</label>
+              <input type="text" id="city" name="city" placeholder="City" required />
+            </div>
+
+            <div class="form-group">
+              <label for="state">State *</label>
+              <input
+                type="text"
+                id="state"
+                name="state"
+                placeholder="State"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="pincode">PIN Code *</label>
+              <input
+                type="text"
+                id="pincode"
+                name="pincode"
+                placeholder="6-digit PIN"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="checkout-section">
+          <h2><i class="bi bi-credit-card"></i> Payment Method</h2>
+
+          <label class="payment-option">
+            <input
+              type="radio"
+              name="payment_method"
+              value="Cash on Delivery"
+              checked
+            />
+            <div>
+              <strong>Cash on Delivery (COD)</strong>
+              <p>Pay cash or via UPI at your doorstep when your smartphone arrives.</p>
+            </div>
+          </label>
+        </div>
+
+        <button type="submit" class="place-order-btn">
+          Place Order &bull; ₹{{ total|floatformat:0 }} →
+        </button>
+      </form>
+    </div>
+
+    <div class="checkout-right">
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+
+        {% for item in checkout_items %}
+          <div class="checkout-product">
+            {% if item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt="{{ item.product.name }}"
+              />
+            {% else %}
+              <div style="width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:6px;">
+                <i class="bi bi-phone"></i>
+              </div>
+            {% endif %}
+
+            <div class="checkout-product-info">
+              <strong>{{ item.product.name }}</strong>
+              <span>{{ item.product.brand }}</span>
+              <small>Qty: {{ item.quantity }}</small>
+            </div>
+
+            <strong>₹{{ item.subtotal|floatformat:0 }}</strong>
+          </div>
+        {% endfor %}
+
+        <div class="summary-line" style="margin-top: 12px;">
+          <span>Subtotal</span>
+          <strong>₹{{ total|floatformat:0 }}</strong>
+        </div>
+
+        <div class="summary-line">
+          <span>Shipping &amp; Handling</span>
+          <strong class="free">FREE</strong>
+        </div>
+
+        <hr />
+
+        <div class="summary-total">
+          <span>Final Total</span>
+          <strong>₹{{ total|floatformat:0 }}</strong>
+        </div>
+
+        <div class="secure-checkout" style="margin-top: 8px;">
+          <i class="bi bi-shield-lock-fill"></i>
+          Encrypted &amp; secure order placement
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

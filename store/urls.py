@@ -1,0 +1,176 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+
+    path(
+        'register/',
+        views.register,
+        name='register'
+    ),
+    path(
+        'login/',
+        views.user_login,
+        name='login'
+    ),
+    path(
+        'logout/',
+        views.user_logout,
+        name='logout'
+    ),
+    path(
+        '',
+        views.home,
+        name='home'
+    ),
+    path(
+        'search/',
+        views.search_products,
+        name='search'
+    ),
+    path(
+        'account/',
+        views.my_account,
+        name='my_account'
+    ),
+
+    path(
+        'product/<int:product_id>/',
+        views.product_detail,
+        name='product_detail'
+    ),
+
+    path(
+        'cart/add/<int:product_id>/',
+        views.add_to_cart,
+        name='add_to_cart'
+    ),
+
+    path(
+        'cart/',
+        views.cart,
+        name='cart'
+    ),
+
+    path(
+        'cart/remove/<int:item_id>/',
+        views.remove_from_cart,
+        name='remove_from_cart'
+    ),
+    path(
+        'cart/increase/<int:item_id>/',
+        views.increase_quantity,
+        name='increase_quantity'
+    ),
+
+    path(
+        'cart/decrease/<int:item_id>/',
+        views.decrease_quantity,
+        name='decrease_quantity'
+    ),
+    path(
+        'buy-now/<int:product_id>/',
+        views.buy_now,
+        name='buy_now'
+    ),
+    path(
+        'checkout/',
+        views.checkout,
+        name='checkout'
+    ),
+
+    path(
+        'order-success/<int:order_id>/',
+        views.order_success,
+        name='order_success'
+    ),
+    path(
+        'order/<int:order_id>/',
+        views.order_detail,
+        name='order_detail'
+    ),
+    path(
+        'orders/',
+        views.my_orders,
+        name='my_orders'
+    ),
+    path(
+        'wishlist/',
+        views.wishlist,
+        name='wishlist'
+    ),
+
+    path(
+        'wishlist/add/<int:product_id>/',
+        views.add_to_wishlist,
+        name='add_to_wishlist'
+    ),
+
+    path(
+        'wishlist/remove/<int:item_id>/',
+        views.remove_from_wishlist,
+        name='remove_from_wishlist'
+    ),
+    path(
+        'brand/<str:brand_name>/',
+        views.brand_products,
+        name='brand_products'
+    ),
+    path(
+        'seller/dashboard/',
+        views.seller_dashboard,
+        name='seller_dashboard'
+    ),
+    path(
+        'seller/order/<int:order_id>/status/',
+        views.seller_update_order_status,
+        name='seller_update_order_status'
+    ),
+    path(
+        'seller/order/<int:order_id>/',
+        views.seller_order_detail,
+        name='seller_order_detail'
+    ),
+    path(
+        'seller/products/add/',
+        views.seller_add_product,
+        name='seller_add_product'
+    ),
+    path(
+        'seller/products/edit/<int:product_id>/',
+        views.seller_edit_product,
+        name='seller_edit_product'
+    ),
+
+    path(
+        'seller/delete/<int:product_id>/',
+        views.seller_delete_product,
+        name='seller_delete_product'
+    ),
+    path(
+        'seller/products/stock/<int:product_id>/',
+        views.seller_update_stock,
+        name='seller_update_stock'
+    ),
+        path(
+        'become-seller/',
+        views.become_seller,
+        name='become_seller'
+    ),
+    path(
+        'seller/store/',
+        views.seller_store,
+        name='seller_store'
+    ),
+    path(
+        'seller/store/edit/',
+        views.seller_edit_store,
+        name='seller_edit_store'
+    ),
+    path(
+        'orders/<int:order_id>/cancel/',
+        views.cancel_order,
+        name='cancel_order'
+    ),
+
+]

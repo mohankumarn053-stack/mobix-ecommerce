@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Account | MOBIX{% endblock %}
+
+{% block content %}
+<main class="account-page">
+  <div class="account-container">
+    <!-- ACCOUNT HEADER -->
+    <div class="account-header">
+      <div class="account-avatar">
+        {{ request.user.username|first|upper }}
+      </div>
+
+      <div>
+        <div class="account-label">CUSTOMER DASHBOARD</div>
+        <h1>Welcome, {{ request.user.username }}!</h1>
+        <p>Manage your personal profile, order history, wishlist and seller access.</p>
+      </div>
+    </div>
+
+    <!-- ACCOUNT STATS -->
+    <div class="account-stats">
+      <div class="account-stat">
+        <div class="account-stat-icon">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <div>
+          <strong>{{ orders|length }}</strong>
+          <span>Total Orders</span>
+        </div>
+      </div>
+
+      <div class="account-stat">
+        <div class="account-stat-icon">
+          <i class="bi bi-heart"></i>
+        </div>
+        <div>
+          <strong>{{ wishlist_count }}</strong>
+          <span>Wishlist Items</span>
+        </div>
+      </div>
+
+      <div class="account-stat">
+        <div class="account-stat-icon">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div>
+          <strong>Active</strong>
+          <span>Account Standing</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT GRID -->
+    <div class="account-grid">
+      <!-- PERSONAL INFORMATION -->
+      <div class="account-card">
+        <h2>
+          <i class="bi bi-person"></i>
+          Personal Information
+        </h2>
+
+        <div class="account-info">
+          <div>
+            <span>Username:</span>
+            <strong>{{ request.user.username }}</strong>
+          </div>
+
+          <div>
+            <span>Email Address:</span>
+            <strong>{{ request.user.email|default:"Not provided" }}</strong>
+          </div>
+
+          <div>
+            <span>Member Since:</span>
+            <strong>{{ request.user.date_joined|date:"d M Y" }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="account-card">
+        <h2>
+          <i class="bi bi-grid"></i>
+          Quick Navigation
+        </h2>
+
+        <div class="account-links">
+          <a href="{% url 'my_orders' %}">
+            <i class="bi bi-box-seam"></i>
+            <span>My Orders</span>
+            <i class="bi bi-chevron-right account-arrow"></i>
+          </a>
+
+          <a href="{% url 'wishlist' %}">
+            <i class="bi bi-heart"></i>
+            <span>My Wishlist</span>
+            {% if wishlist_count %}
+              <span class="account-count">{{ wishlist_count }}</span>
+            {% endif %}
+            <i class="bi bi-chevron-right account-arrow"></i>
+          </a>
+
+          <a href="{% url 'cart' %}">
+            <i class="bi bi-bag"></i>
+            <span>Shopping Cart</span>
+            <i class="bi bi-chevron-right account-arrow"></i>
+          </a>
+
+          <a href="{% url 'logout' %}" class="logout-link">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Sign Out</span>
+            <i class="bi bi-chevron-right account-arrow"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- SELLER CENTER -->
+      <div class="account-card seller-card">
+        <h2>
+          <i class="bi bi-shop"></i>
+          Seller Center
+        </h2>
+
+        {% if seller_application %}
+          {% if seller_application.status == "Approved" %}
+            <p class="seller-description">
+              Your seller account is approved and active. You can manage products, fulfill customer orders, and view your sales performance.
+            </p>
+            <a href="{% url 'seller_dashboard' %}" class="seller-action seller-approved">
+              <i class="bi bi-speedometer2"></i>
+              <span>Go to Seller Dashboard</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          {% elif seller_application.status == "Pending" %}
+            <p class="seller-description">
+              Your seller application is currently being reviewed by the MOBIX administrative team. We will notify you once verified.
+            </p>
+            <div class="seller-status seller-pending">
+              <i class="bi bi-hourglass-split"></i>
+              <span>Application Under Review</span>
+            </div>
+          {% elif seller_application.status == "Rejected" %}
+            <p class="seller-description">
+              Unfortunately, your previous seller application could not be approved. You are welcome to submit an updated application.
+            </p>
+            <a href="{% url 'become_seller' %}" class="seller-action seller-rejected">
+              <i class="bi bi-arrow-repeat"></i>
+              <span>Reapply to Become a Seller</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          {% endif %}
+        {% else %}
+          <p class="seller-description">
+            Want to expand your smartphone business? Sell verified devices and accessories directly to thousands of customers on MOBIX.
+          </p>
+          <a href="{% url 'become_seller' %}" class="seller-action">
+            <i class="bi bi-shop"></i>
+            <span>Apply to Become a Seller</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- RECENT ORDERS -->
+    <section class="orders-section">
+      <div class="section-heading" style="margin-bottom: 20px;">
+        <div>
+          <p class="account-label">RECENT PURCHASES</p>
+          <h2>Recent Orders</h2>
+        </div>
+
+        {% if orders %}
+          <a href="{% url 'my_orders' %}" class="view-all-orders">
+            <span>View All Orders</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        {% endif %}
+      </div>
+
+      {% if orders %}
+        <div class="orders-list">
+          {% for order in orders|slice:":3" %}
+            <div class="order-card">
+              <div class="order-main">
+                <div>
+                  <span class="order-label">ORDER #{{ order.id }}</span>
+                  <h3>₹{{ order.total_amount|floatformat:0 }}</h3>
+                  <p>{{ order.created_at|date:"d M Y, h:i A" }}</p>
+                </div>
+
+                <div class="order-status status-{{ order.status|lower }}">
+                  {{ order.status }}
+                </div>
+              </div>
+
+              <div class="order-meta">
+                <span>Payment: <strong>{{ order.payment_method }}</strong></span>
+                <span>Items: <strong>{{ order.items.count }}</strong></span>
+                <a href="{% url 'order_detail' order.id %}" style="margin-left: auto; color: var(--color-primary); font-weight: 600;">
+                  Details →
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-orders">
+          <div class="empty-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+          <h3>No Orders Yet</h3>
+          <p>You haven't placed any smartphone orders yet. Explore our collection and place your first order.</p>
+          <a href="{% url 'home' %}#products" class="orders-shop-btn">
+            <span>Start Shopping</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      {% endif %}
+    </section>
+  </div>
+</main>
+{% endblock %}

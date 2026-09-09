@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | MOBIX{% endblock %}
+
+{% block content %}
+<!-- BREADCRUMB -->
+<div class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{% url 'home' %}">Home</a>
+  <i class="bi bi-chevron-right" aria-hidden="true"></i>
+  <a href="{% url 'brand_products' product.category.name %}">{{ product.brand }}</a>
+  <i class="bi bi-chevron-right" aria-hidden="true"></i>
+  <span>{{ product.name }}</span>
+</div>
+
+<!-- PRODUCT DETAILS -->
+<section class="product-detail">
+  <!-- IMAGE SECTION -->
+  <div class="detail-image-section">
+    <div class="detail-image">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+      {% else %}
+        <div class="product-placeholder">
+          <i class="bi bi-phone"></i>
+        </div>
+      {% endif %}
+
+      {% if product.discount > 0 %}
+        <span class="detail-discount">-{{ product.discount }}% OFF</span>
+      {% endif %}
+    </div>
+
+    <div class="image-thumbnails">
+      <div class="thumbnail active">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+        {% else %}
+          <div style="height:100%;display:flex;align-items:center;justify-content:center;color:#9ca3af;"><i class="bi bi-phone"></i></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- INFORMATION SECTION -->
+  <div class="detail-info">
+    <p class="detail-brand">{{ product.brand }}</p>
+
+    <h1>{{ product.name }}</h1>
+
+    <div class="detail-rating">
+      <span class="rating-badge">
+        <i class="bi bi-star-fill"></i>
+        {{ product.rating }}
+      </span>
+      <span>Verified customer rating</span>
+    </div>
+
+    <div class="detail-price">
+      {% if product.discount > 0 %}
+        <span class="detail-old-price">₹{{ product.price }}</span>
+        <span class="detail-current-price">
+          ₹{{ product.discounted_price|floatformat:0 }}
+        </span>
+      {% else %}
+        <span class="detail-current-price">₹{{ product.price }}</span>
+      {% endif %}
+    </div>
+
+    <p class="tax-info"><i class="bi bi-check2"></i> Inclusive of all taxes</p>
+
+    <!-- STOCK -->
+    {% if product.stock > 0 %}
+      <div class="stock available">
+        <i class="bi bi-check-circle-fill"></i>
+        In Stock
+        <span>({{ product.stock }} unit{{ product.stock|pluralize }} available)</span>
+      </div>
+    {% else %}
+      <div class="stock unavailable">
+        <i class="bi bi-x-circle-fill"></i>
+        Out of Stock
+      </div>
+    {% endif %}
+
+    <!-- DESCRIPTION -->
+    <div class="detail-description">
+      <h3>About this smartphone</h3>
+      <p>{{ product.description }}</p>
+    </div>
+
+    <!-- SPECIFICATIONS -->
+    <div class="specifications">
+      <h3>Key Specifications</h3>
+
+      <div class="spec-grid">
+        {% if product.storage %}
+          <div class="spec-item">
+            <i class="bi bi-device-ssd"></i>
+            <div>
+              <span>Storage</span>
+              <strong>{{ product.storage }}</strong>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.ram %}
+          <div class="spec-item">
+            <i class="bi bi-memory"></i>
+            <div>
+              <span>RAM</span>
+              <strong>{{ product.ram }}</strong>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.color %}
+          <div class="spec-item">
+            <i class="bi bi-palette"></i>
+            <div>
+              <span>Color</span>
+              <strong>{{ product.color }}</strong>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.display %}
+          <div class="spec-item">
+            <i class="bi bi-phone"></i>
+            <div>
+              <span>Display</span>
+              <strong>{{ product.display }}</strong>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.processor %}
+          <div class="spec-item">
+            <i class="bi bi-cpu"></i>
+            <div>
+              <span>Processor</span>
+              <strong>{{ product.processor }}</strong>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.camera %}
+          <div class="spec-item">
+            <i class="bi bi-camera"></i>
+            <div>
+              <span>Camera</span>
+              <strong>{{ product.camera }}</strong>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if product.battery %}
+          <div class="spec-item">
+            <i class="bi bi-battery-full"></i>
+            <div>
+              <span>Battery</span>
+              <strong>{{ product.battery }}</strong>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    {% if product.stock > 0 %}
+      <div class="purchase-actions">
+        <div class="quantity">
+          <button type="button" id="decrease-btn" aria-label="Decrease quantity">−</button>
+          <span id="quantity-value">1</span>
+          <button type="button" id="increase-btn" aria-label="Increase quantity">+</button>
+        </div>
+
+        <a
+          href="{% url 'add_to_wishlist' product.id %}"
+          class="wishlist-btn"
+          title="Add to Wishlist"
+          aria-label="Add to Wishlist"
+        >
+          <i class="bi bi-heart"></i>
+        </a>
+
+        <form
+          method="POST"
+          action="{% url 'add_to_cart' product.id %}"
+          class="add-cart-form"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="quantity" id="cart-quantity" value="1" />
+          <button type="submit" class="add-to-cart-btn">
+            <i class="bi bi-bag-plus"></i>
+            <span>Add to Cart</span>
+          </button>
+        </form>
+
+        <form
+          method="POST"
+          action="{% url 'buy_now' product.id %}"
+          class="buy-now-form"
+        >
+          {% csrf_token %}
+          <input
+            type="hidden"
+            name="quantity"
+            id="buy-now-quantity"
+            value="1"
+          />
+          <button type="submit" class="buy-now-btn">
+            <span>Buy Now</span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <div class="purchase-actions">
+        <a
+          href="{% url 'add_to_wishlist' product.id %}"
+          class="wishlist-btn"
+          title="Add to Wishlist"
+          style="width:auto;padding:0 20px;gap:8px;display:inline-flex;"
+        >
+          <i class="bi bi-heart"></i> Save to Wishlist
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- DELIVERY FEATURES -->
+<section class="detail-features">
+  <div>
+    <i class="bi bi-truck"></i>
+    <div>
+      <strong>Free Delivery</strong>
+      <span>On orders above ₹999</span>
+    </div>
+  </div>
+
+  <div>
+    <i class="bi bi-shield-check"></i>
+    <div>
+      <strong>Secure Payment</strong>
+      <span>100% secure checkout</span>
+    </div>
+  </div>
+
+  <div>
+    <i class="bi bi-arrow-repeat"></i>
+    <div>
+      <strong>Easy Returns</strong>
+      <span>7 day return policy</span>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const decreaseBtn = document.getElementById("decrease-btn");
+  const increaseBtn = document.getElementById("increase-btn");
+  const quantityValue = document.getElementById("quantity-value");
+  const cartQuantity = document.getElementById("cart-quantity");
+  const buyNowQuantity = document.getElementById("buy-now-quantity");
+
+  let quantity = 1;
+  const maxStock = {{ product.stock }};
+
+  if (increaseBtn && decreaseBtn) {
+    increaseBtn.addEventListener("click", function () {
+      if (quantity < maxStock) {
+        quantity++;
+        quantityValue.textContent = quantity;
+        if (cartQuantity) cartQuantity.value = quantity;
+        if (buyNowQuantity) buyNowQuantity.value = quantity;
+      }
+    });
+
+    decreaseBtn.addEventListener("click", function () {
+      if (quantity > 1) {
+        quantity--;
+        quantityValue.textContent = quantity;
+        if (cartQuantity) cartQuantity.value = quantity;
+        if (buyNowQuantity) buyNowQuantity.value = quantity;
+      }
+    });
+  }
+</script>
+{% endblock %}

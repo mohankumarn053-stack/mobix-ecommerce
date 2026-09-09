@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Confirmed #{{ order.id }} | MOBIX{% endblock %}
+
+{% block content %}
+<main class="success-page">
+  <div class="success-card">
+    <!-- SUCCESS ICON -->
+    <div class="success-icon">
+      <i class="bi bi-check-lg"></i>
+    </div>
+
+    <div class="success-label">ORDER CONFIRMED</div>
+    <h1>Thank You For Your Order!</h1>
+    <p class="success-message">
+      Your smartphone order has been placed successfully. We are preparing it for delivery.
+    </p>
+
+    <!-- ORDER NUMBER -->
+    <div class="order-number">Order Reference #{{ order.id }}</div>
+
+    <!-- ORDER DETAILS -->
+    <div class="success-details">
+      <div>
+        <span>Payment Method</span>
+        <strong>{{ order.payment_method }}</strong>
+      </div>
+
+      <div>
+        <span>Order Status</span>
+        <strong class="status-badge" style="display:inline-block;">{{ order.status }}</strong>
+      </div>
+
+      <div>
+        <span>Total Paid / Due</span>
+        <strong>₹{{ order.total_amount|floatformat:0 }}</strong>
+      </div>
+    </div>
+
+    <!-- DELIVERY INFORMATION -->
+    <div class="delivery-box">
+      <div class="box-heading">
+        <div class="box-icon" style="color:var(--color-primary);"><i class="bi bi-truck"></i></div>
+        <div>
+          <h3>Shipping &amp; Delivery Destination</h3>
+          <span>Delivery details</span>
+        </div>
+      </div>
+
+      <div class="delivery-content">
+        <div class="delivery-row">
+          <span class="delivery-label">Recipient:</span>
+          <strong>{{ order.full_name }}</strong>
+        </div>
+
+        <div class="delivery-row">
+          <span class="delivery-label">Address:</span>
+          <p>
+            {{ order.address }}<br />
+            {{ order.city }}, {{ order.state }} - {{ order.pincode }}
+          </p>
+        </div>
+
+        <div class="delivery-row">
+          <span class="delivery-label">Contact:</span>
+          <strong>{{ order.phone }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="success-items">
+      <div class="success-section-title">
+        <div>
+          <span class="success-mini-label">ITEMS PURCHASED</span>
+          <h2>Your Smartphones</h2>
+        </div>
+
+        <span class="items-count">
+          {{ order.items.count }} item{{ order.items.count|pluralize }}
+        </span>
+      </div>
+
+      {% for item in order.items.all %}
+        <div class="success-item">
+          <div class="success-item-image">
+            {% if item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt="{{ item.product.name }}"
+              />
+            {% else %}
+              <i class="bi bi-phone" style="font-size:24px;color:#9ca3af;"></i>
+            {% endif %}
+          </div>
+
+          <div class="success-item-info">
+            <span>{{ item.product.brand }}</span>
+            <h3>{{ item.product.name }}</h3>
+            <p>Quantity: {{ item.quantity }}</p>
+          </div>
+
+          <div class="success-item-price">
+            <strong>₹{{ item.price|floatformat:0 }}</strong>
+            <span>each</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- PRICE SUMMARY -->
+    <div class="success-summary">
+      <div class="success-summary-row">
+        <span>Subtotal</span>
+        <strong>₹{{ order.total_amount|floatformat:0 }}</strong>
+      </div>
+
+      <div class="success-summary-row">
+        <span>Delivery</span>
+        <strong class="free">FREE</strong>
+      </div>
+
+      <div class="success-summary-divider"></div>
+
+      <div class="success-summary-total">
+        <span>Final Total</span>
+        <strong>₹{{ order.total_amount|floatformat:0 }}</strong>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="success-actions">
+      <a href="{% url 'home' %}" class="continue-btn" style="background:#111827;">
+        <i class="bi bi-arrow-left"></i>
+        Continue Shopping
+      </a>
+
+      <a href="{% url 'my_orders' %}" class="orders-btn">
+        <i class="bi bi-box-seam"></i>
+        Track in My Orders
+      </a>
+    </div>
+
+    <!-- TRUST MESSAGE -->
+    <div class="success-trust">
+      <i class="bi bi-shield-check" style="color:var(--color-success);font-size:18px;"></i>
+      <p>Thank you for shopping with MOBIX. Your order is backed by our authentic product guarantee &amp; 7-day easy returns.</p>
+    </div>
+  </div>
+</main>
+{% endblock %}

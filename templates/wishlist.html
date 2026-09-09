@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Wishlist | MOBIX{% endblock %}
+
+{% block content %}
+<main class="wishlist-page">
+  <div class="wishlist-header">
+    <div>
+      <p class="wishlist-label">SAVED ITEMS</p>
+      <h1>My Wishlist</h1>
+      <p class="wishlist-subtitle">Products you've saved for future purchase.</p>
+    </div>
+
+    <span class="wishlist-count">
+      {{ wishlist_items|length }} item{{ wishlist_items|length|pluralize }}
+    </span>
+  </div>
+
+  {% if wishlist_items %}
+    <div class="wishlist-grid">
+      {% for item in wishlist_items %}
+        <div class="wishlist-card">
+          <!-- PRODUCT IMAGE -->
+          <div class="wishlist-image">
+            {% if item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt="{{ item.product.name }}"
+              />
+            {% else %}
+              <i class="bi bi-phone" style="font-size:36px;color:#9ca3af;"></i>
+            {% endif %}
+
+            {% if item.product.discount > 0 %}
+              <span class="wishlist-discount">
+                -{{ item.product.discount }}% OFF
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- PRODUCT INFORMATION -->
+          <div class="wishlist-info">
+            <p class="wishlist-brand">{{ item.product.brand }}</p>
+
+            <h2>
+              <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+            </h2>
+
+            <div class="wishlist-rating">
+              <span class="rating-badge">
+                <i class="bi bi-star-fill"></i>
+                {{ item.product.rating }}
+              </span>
+              <span>Verified rating</span>
+            </div>
+
+            <!-- PRICE -->
+            <div class="wishlist-price">
+              {% if item.product.discount > 0 %}
+                <span class="wishlist-old-price">
+                  ₹{{ item.product.price }}
+                </span>
+              {% endif %}
+
+              <strong>
+                ₹{{ item.product.discounted_price|floatformat:0 }}
+              </strong>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="wishlist-actions">
+              <a
+                href="{% url 'product_detail' item.product.id %}"
+                class="wishlist-cart-btn"
+              >
+                <i class="bi bi-bag-plus"></i>
+                <span>View &amp; Buy</span>
+              </a>
+
+              <a
+                href="{% url 'remove_from_wishlist' item.id %}"
+                class="wishlist-remove-btn"
+                title="Remove from Wishlist"
+                aria-label="Remove from Wishlist"
+              >
+                <i class="bi bi-trash3"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- EMPTY WISHLIST -->
+    <div class="wishlist-empty">
+      <div class="wishlist-empty-icon">
+        <i class="bi bi-heart"></i>
+      </div>
+
+      <h2>Your Wishlist is Empty</h2>
+      <p>Save your favorite smartphones here by tapping the heart icon and come back when you're ready to buy.</p>
+
+      <a href="{% url 'search' %}" class="wishlist-shop-btn">
+        <span>Browse Smartphones</span>
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  {% endif %}
+</main>
+{% endblock %}

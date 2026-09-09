@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders | MOBIX{% endblock %}
+
+{% block content %}
+<main class="orders-page">
+  <div class="orders-container">
+    <!-- PAGE HEADER -->
+    <div class="orders-header">
+      <div>
+        <span class="orders-label">PURCHASE HISTORY</span>
+        <h1>My Orders</h1>
+        <p>Track, manage and check the status of your recent smartphone orders.</p>
+      </div>
+
+      <a href="{% url 'home' %}#products" class="orders-shop-btn">
+        <span>Continue Shopping</span>
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <!-- ORDERS LIST -->
+    {% if orders %}
+      <div class="orders-list">
+        {% for order in orders %}
+          <div class="order-card" style="margin-bottom: 24px; background: white;">
+            <!-- ORDER HEADER -->
+            <div class="order-card-header">
+              <div>
+                <span class="order-small-label">ORDER NUMBER</span>
+                <h2>#{{ order.id }}</h2>
+              </div>
+
+              <div class="order-date">
+                <i class="bi bi-calendar3"></i>
+                {{ order.created_at|date:"d M Y, h:i A" }}
+              </div>
+
+              <div class="order-status status-{{ order.status|lower }}">
+                {{ order.status }}
+              </div>
+
+              <a href="{% url 'order_detail' order.id %}" class="view-order-btn">
+                <span>View Details</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+
+            <!-- ORDER PRODUCTS -->
+            <div class="order-products">
+              {% for item in order.items.all %}
+                <div class="order-product">
+                  <div class="order-product-image">
+                    {% if item.product.image %}
+                      <img
+                        src="{{ item.product.image.url }}"
+                        alt="{{ item.product.name }}"
+                      />
+                    {% else %}
+                      <i class="bi bi-phone" style="font-size:24px;color:#9ca3af;"></i>
+                    {% endif %}
+                  </div>
+
+                  <div class="order-product-info">
+                    <span>{{ item.product.brand }}</span>
+                    <h3>{{ item.product.name }}</h3>
+                    <p>Quantity: {{ item.quantity }}</p>
+                  </div>
+
+                  <div class="order-product-price">
+                    ₹{{ item.price|floatformat:0 }}
+                  </div>
+                </div>
+
+                <!-- INDIVIDUAL PRODUCT TRACKING -->
+                <div class="product-tracking">
+                  <div class="product-tracking-title">
+                    <i class="bi bi-truck"></i>
+                    Delivery Progress
+                  </div>
+
+                  <div class="tracking-steps">
+                    <!-- ORDER PLACED -->
+                    <div class="tracking-step active">
+                      <div class="tracking-icon">
+                        <i class="bi bi-receipt"></i>
+                      </div>
+                      <strong>Placed</strong>
+                      <span>Order received</span>
+                    </div>
+
+                    <div class="tracking-line"></div>
+
+                    <!-- CONFIRMED -->
+                    <div class="tracking-step {% if item.status == 'Confirmed' or item.status == 'Shipped' or item.status == 'Delivered' %}active{% endif %}">
+                      <div class="tracking-icon">
+                        <i class="bi bi-check-lg"></i>
+                      </div>
+                      <strong>Confirmed</strong>
+                      <span>Processing</span>
+                    </div>
+
+                    <div class="tracking-line"></div>
+
+                    <!-- SHIPPED -->
+                    <div class="tracking-step {% if item.status == 'Shipped' or item.status == 'Delivered' %}active{% endif %}">
+                      <div class="tracking-icon">
+                        <i class="bi bi-box-seam"></i>
+                      </div>
+                      <strong>Shipped</strong>
+                      <span>In transit</span>
+                    </div>
+
+                    <div class="tracking-line"></div>
+
+                    <!-- DELIVERED -->
+                    <div class="tracking-step {% if item.status == 'Delivered' %}active{% endif %}">
+                      <div class="tracking-icon">
+                        <i class="bi bi-house-check"></i>
+                      </div>
+                      <strong>Delivered</strong>
+                      <span>Completed</span>
+                    </div>
+                  </div>
+
+                  <div class="product-current-status">
+                    <strong>Item Status:</strong>
+                    <span class="order-status status-{{ item.status|lower }}">
+                      {{ item.status }}
+                    </span>
+                  </div>
+                </div>
+
+                {% if not forloop.last %}
+                  <hr class="product-tracking-divider" />
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <!-- ORDER FOOTER -->
+            <div class="order-card-footer">
+              <div class="order-total">
+                <span>Total Amount:</span>
+                <strong>₹{{ order.total_amount|floatformat:0 }}</strong>
+              </div>
+
+              <a href="{% url 'order_detail' order.id %}" class="secondary-order-btn">
+                <span>Manage Order</span>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="orders-empty">
+        <div class="empty-orders-icon">
+          <i class="bi bi-box-seam" style="font-size: 56px; color: #9ca3af;"></i>
+        </div>
+
+        <h2>No Orders Yet</h2>
+        <p>You haven't placed any smartphone orders yet. Explore our catalog and get your new device today.</p>
+
+        <a href="{% url 'home' %}#products" class="continue-btn">
+          <span>Start Shopping</span>
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}
