@@ -373,7 +373,7 @@ Full-Stack Developer | Django | Python | MySQL
 https://github.com/mohankumarn053-stack
 
 **Project Repository:**  
-https://github.com/sansanju5413/mobix-ecommerce
+https://github.com/mohankumarn053-stack/mobix-ecommerce
 
 ---
 
